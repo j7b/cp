@@ -40,6 +40,8 @@ type Shape struct {
 	Filter        ShapeFilter
 
 	hashid HashValue
+
+	collisionInfo *CollisionInfo
 }
 
 func (s Shape) String() string {
@@ -205,5 +207,6 @@ func NewShape(class ShapeClass, body *Body, massInfo *ShapeMassInfo) *Shape {
 			Categories: ALL_CATEGORIES,
 			Mask:       ALL_CATEGORIES,
 		},
+		collisionInfo: new(CollisionInfo),
 	}
 }

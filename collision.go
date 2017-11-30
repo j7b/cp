@@ -498,7 +498,12 @@ var BuiltinCollisionFuncs [9]CollisionFunc = [9]CollisionFunc{
 }
 
 func Collide(a, b *Shape, collisionId uint32, contacts []Contact) *CollisionInfo {
-	info := &CollisionInfo{a, b, collisionId, Vector{}, 0, contacts}
+	info := a.collisionInfo
+	if info == nil {
+		info = new(CollisionInfo)
+		a.collisionInfo = info
+	}
+	*info = CollisionInfo{a, b, collisionId, Vector{}, 0, contacts}
 
 	// Make sure the shape types are in order.
 	if a.Order() > b.Order() {
