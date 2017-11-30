@@ -470,7 +470,7 @@ func (arb *Arbiter) ContactPointSet() ContactPointSet {
 
 func (arb *Arbiter) SetContactPointSet(set *ContactPointSet) {
 	count := set.Count
-	assert(count == int(arb.count))
+	assert(count == int(arb.count), "")
 
 	swapped := arb.swapped
 	if swapped {

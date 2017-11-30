@@ -117,7 +117,7 @@ func (space *Space) Damping() float64 {
 }
 
 func (space *Space) SetDamping(damping float64) {
-	assert(damping >= 0)
+	assert(damping >= 0, "")
 	space.damping = damping
 }
 
@@ -327,8 +327,8 @@ func (space *Space) RemoveConstraint(constraint *Constraint) {
 
 func (space *Space) RemoveShape(shape *Shape) {
 	body := shape.body
-	assert(space.ContainsShape(shape))
-	assert(space.locked == 0)
+	assert(space.ContainsShape(shape), "")
+	assert(space.locked == 0, "")
 
 	isStatic := body.GetType() == BODY_STATIC
 	if isStatic {
@@ -349,9 +349,9 @@ func (space *Space) RemoveShape(shape *Shape) {
 }
 
 func (space *Space) RemoveBody(body *Body) {
-	assert(body != space.StaticBody)
-	assert(space.ContainsBody(body))
-	assert(space.locked == 0)
+	assert(body != space.StaticBody, "")
+	assert(space.ContainsBody(body), "")
+	assert(space.locked == 0, "")
 
 	body.Activate()
 	if body.GetType() == BODY_STATIC {
@@ -923,7 +923,7 @@ func (space *Space) EachShape(f func(*Shape)) {
 func (space *Space) EachConstraint(f func(*Constraint)) {
 	space.Lock()
 
-	for i:=0; i<len(space.constraints); i++ {
+	for i := 0; i < len(space.constraints); i++ {
 		f(space.constraints[i])
 	}
 

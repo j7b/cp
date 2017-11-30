@@ -378,7 +378,7 @@ func (body *Body) Activate() {
 }
 
 func (body *Body) ActivateStatic(filter *Shape) {
-	assert(body.GetType() == BODY_STATIC)
+	assert(body.GetType() == BODY_STATIC, "")
 
 	for arb := body.arbiterList; arb != nil; arb = arb.Next(body) {
 		if filter == nil || filter == arb.a || filter == arb.b {

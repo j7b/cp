@@ -253,9 +253,13 @@ func MomentForBox2(m float64, box BB) float64 {
 	return MomentForBox(m, width, height) + m*offset.LengthSq()
 }
 
-func assert(truth bool, msg ...interface{}) {
+func assert(truth bool, msg string) {
 	if !truth {
-		panic(fmt.Sprint("Assertion failed: ", msg))
+		if len(msg) > 0 {
+			panic(fmt.Sprint("Assertion failed: ", msg))
+		} else {
+			panic("Assertion failed")
+		}
 	}
 }
 
