@@ -40,7 +40,7 @@ type Space struct {
 	arbiters           []*Arbiter
 	contactBuffersHead *ContactBuffer
 	cachedArbiters     *HashSetArbiter
-	pooledArbiters     chan *Arbiter
+	pooledArbiters     map[*Arbiter]struct{}
 
 	locked int
 
@@ -81,11 +81,14 @@ func NewSpace() *Space {
 		idleSpeedThreshold:   0.0,
 		arbiters:             []*Arbiter{},
 		cachedArbiters:       NewHashSetArbiter(arbiterSetEql),
-		pooledArbiters:       make(chan *Arbiter, POOLED_BUFFER_SIZE),
+		pooledArbiters:       make(map[*Arbiter]struct{}),
 		constraints:          []*Constraint{},
 		collisionHandlers:    NewHashSetCollisionHandler(),
 		postStepCallbacks:    []*PostStepCallback{},
 		defaultHandler:       &CollisionHandlerDoNothing,
+	}
+	for i := 0; i < POOLED_BUFFER_SIZE; i++ {
+		space.pooledArbiters[&Arbiter{}] = struct{}{}
 	}
 	space.dynamicShapes = NewBBTree(ShapeGetBB, space.staticShapes)
 	space.dynamicShapes.class.(*BBTree).velocityFunc = BBTreeVelocityFunc(ShapeVelocityFunc)
@@ -400,11 +403,13 @@ var ShapeUpdateFunc = func(shape *Shape) {
 
 func SpaceArbiterSetTrans(shapes []*Shape, space *Space) *Arbiter {
 	var arb *Arbiter
-
-	select {
-	case arb = <-space.pooledArbiters:
-
-	default:
+	if len(space.pooledArbiters) > 0 {
+		for a := range space.pooledArbiters {
+			arb = a
+			break
+		}
+		delete(space.pooledArbiters, arb)
+	} else {
 		arb = &Arbiter{}
 	}
 	arb.Init(shapes[0], shapes[1])
